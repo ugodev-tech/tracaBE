@@ -41,21 +41,21 @@ jobs:
     - name: install dependencies
       run: npm install
      
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    steps:
-    - name: SSH into EC2 and deploy
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USERNAME }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: |
-          cd gotruBE
-          git pull 
-          export NVM_DIR=~/.nvm
-          source ~/.nvm/nvm.sh
-          npm run build
-          npm run start_dev
+  # deploy:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+  #   steps:
+  #   - name: SSH into EC2 and deploy
+  #     uses: appleboy/ssh-action@master
+  #     with:
+  #       host: ${{ secrets.EC2_HOST }}
+  #       username: ${{ secrets.EC2_USERNAME }}
+  #       key: ${{ secrets.SSH_PRIVATE_KEY }}
+  #       script: |
+  #         cd tracaBE
+  #         git pull 
+  #         export NVM_DIR=~/.nvm
+  #         source ~/.nvm/nvm.sh
+  #         npm run build
+  #         npm run start_dev
