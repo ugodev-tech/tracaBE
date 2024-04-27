@@ -49,11 +49,15 @@ export class Onboarding {
               email:value.email
             },
             select:{
-              email:true
+              email:true,
+              is_verified:true
             }
       })
       if (!emailExist) {
         return failedResponse (res, 404, "Email does not exist.")
+      }
+      if (emailExist.is_verified) {
+        return failedResponse (res, 400, "Email already verified")
       }
         await OtpToken(value.email,"Account activation code", "templates/activateemail.html" )
         return successResponse(res,200,"Verification token has been resent to your email.")
