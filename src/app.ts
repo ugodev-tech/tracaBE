@@ -3,6 +3,7 @@ import cors from "cors"
 import bodyParser from "body-parser"
 import { failedResponse } from "./support/http"; 
 import { httpLogger } from "./httpLogger";
+import { authRouter } from "./routers/userRouters";
 
 const app:Application = express();
 
@@ -22,7 +23,7 @@ app.use(express.json())
 // if (process.env.PROJ_ENV === 'DEV' || process.env.PROJ_ENV === 'PRODUCTION') {
 //     Database.getInstance()
 //  }
-
+app.use("/", authRouter)
 app.use((req:Request, res:Response, next:NextFunction)=>{
     failedResponse(res, 404, `Invalid endpoint, inspect url again.`)
 })

@@ -1899,18 +1899,16 @@ export namespace Prisma {
 
   export type TokenAvgAggregateOutputType = {
     id: number | null
-    token: number | null
   }
 
   export type TokenSumAggregateOutputType = {
     id: number | null
-    token: number | null
   }
 
   export type TokenMinAggregateOutputType = {
     id: number | null
     email: string | null
-    token: number | null
+    token: string | null
     created_at: Date | null
     expires_at: Date | null
   }
@@ -1918,7 +1916,7 @@ export namespace Prisma {
   export type TokenMaxAggregateOutputType = {
     id: number | null
     email: string | null
-    token: number | null
+    token: string | null
     created_at: Date | null
     expires_at: Date | null
   }
@@ -1935,12 +1933,10 @@ export namespace Prisma {
 
   export type TokenAvgAggregateInputType = {
     id?: true
-    token?: true
   }
 
   export type TokenSumAggregateInputType = {
     id?: true
-    token?: true
   }
 
   export type TokenMinAggregateInputType = {
@@ -2057,7 +2053,7 @@ export namespace Prisma {
   export type TokenGroupByOutputType = {
     id: number
     email: string
-    token: number | null
+    token: string | null
     created_at: Date
     expires_at: Date
     _count: TokenCountAggregateOutputType | null
@@ -2105,7 +2101,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: number
       email: string
-      token: number | null
+      token: string | null
       created_at: Date
       expires_at: Date
     }, ExtArgs["result"]["token"]>
@@ -2504,7 +2500,7 @@ export namespace Prisma {
   interface TokenFieldRefs {
     readonly id: FieldRef<"Token", 'Int'>
     readonly email: FieldRef<"Token", 'String'>
-    readonly token: FieldRef<"Token", 'Int'>
+    readonly token: FieldRef<"Token", 'String'>
     readonly created_at: FieldRef<"Token", 'DateTime'>
     readonly expires_at: FieldRef<"Token", 'DateTime'>
   }
@@ -2990,7 +2986,7 @@ export namespace Prisma {
     NOT?: TokenWhereInput | TokenWhereInput[]
     id?: IntFilter<"Token"> | number
     email?: StringFilter<"Token"> | string
-    token?: IntNullableFilter<"Token"> | number | null
+    token?: StringNullableFilter<"Token"> | string | null
     created_at?: DateTimeFilter<"Token"> | Date | string
     expires_at?: DateTimeFilter<"Token"> | Date | string
   }
@@ -3009,7 +3005,7 @@ export namespace Prisma {
     OR?: TokenWhereInput[]
     NOT?: TokenWhereInput | TokenWhereInput[]
     email?: StringFilter<"Token"> | string
-    token?: IntNullableFilter<"Token"> | number | null
+    token?: StringNullableFilter<"Token"> | string | null
     created_at?: DateTimeFilter<"Token"> | Date | string
     expires_at?: DateTimeFilter<"Token"> | Date | string
   }, "id">
@@ -3033,7 +3029,7 @@ export namespace Prisma {
     NOT?: TokenScalarWhereWithAggregatesInput | TokenScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Token"> | number
     email?: StringWithAggregatesFilter<"Token"> | string
-    token?: IntNullableWithAggregatesFilter<"Token"> | number | null
+    token?: StringNullableWithAggregatesFilter<"Token"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"Token"> | Date | string
     expires_at?: DateTimeWithAggregatesFilter<"Token"> | Date | string
   }
@@ -3107,7 +3103,7 @@ export namespace Prisma {
 
   export type TokenCreateInput = {
     email: string
-    token?: number | null
+    token?: string | null
     created_at?: Date | string
     expires_at: Date | string
   }
@@ -3115,14 +3111,14 @@ export namespace Prisma {
   export type TokenUncheckedCreateInput = {
     id?: number
     email: string
-    token?: number | null
+    token?: string | null
     created_at?: Date | string
     expires_at: Date | string
   }
 
   export type TokenUpdateInput = {
     email?: StringFieldUpdateOperationsInput | string
-    token?: NullableIntFieldUpdateOperationsInput | number | null
+    token?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -3130,7 +3126,7 @@ export namespace Prisma {
   export type TokenUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     email?: StringFieldUpdateOperationsInput | string
-    token?: NullableIntFieldUpdateOperationsInput | number | null
+    token?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -3138,14 +3134,14 @@ export namespace Prisma {
   export type TokenCreateManyInput = {
     id?: number
     email: string
-    token?: number | null
+    token?: string | null
     created_at?: Date | string
     expires_at: Date | string
   }
 
   export type TokenUpdateManyMutationInput = {
     email?: StringFieldUpdateOperationsInput | string
-    token?: NullableIntFieldUpdateOperationsInput | number | null
+    token?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -3153,7 +3149,7 @@ export namespace Prisma {
   export type TokenUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     email?: StringFieldUpdateOperationsInput | string
-    token?: NullableIntFieldUpdateOperationsInput | number | null
+    token?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -3336,17 +3332,6 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
   export type TokenCountOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
@@ -3357,7 +3342,6 @@ export namespace Prisma {
 
   export type TokenAvgOrderByAggregateInput = {
     id?: SortOrder
-    token?: SortOrder
   }
 
   export type TokenMaxOrderByAggregateInput = {
@@ -3378,23 +3362,6 @@ export namespace Prisma {
 
   export type TokenSumOrderByAggregateInput = {
     id?: SortOrder
-    token?: SortOrder
-  }
-
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -3415,14 +3382,6 @@ export namespace Prisma {
 
   export type IntFieldUpdateOperationsInput = {
     set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
     increment?: number
     decrement?: number
     multiply?: number
@@ -3580,33 +3539,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
 
