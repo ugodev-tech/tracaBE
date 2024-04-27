@@ -1,15 +1,4 @@
-//🧩Don't Edit this file.✨Generated in Fri Apr 26 2024 12:31:08 GMT+0100 (West Africa Standard Time)✨
-// schema.prisma
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
-  output   = "@prisma/client"
-}
-
+//🧩Don't Edit this file.✨Generated in Fri Apr 26 2024 21:50:21 GMT+0100 (West Africa Standard Time)✨
 model User {
   id         Int      @id @default(autoincrement())
   email      String   @unique
@@ -23,7 +12,7 @@ model User {
 model Token {
   id         Int      @id @default(autoincrement())
   email      String
-  token      Int?
+  token      String?
   created_at DateTime @default(now())
   expires_at DateTime
 }
@@ -31,4 +20,13 @@ model Token {
 enum Role {
   USER
   ADMIN
+}
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+  }
+  
+generator client {
+  provider = "prisma-client-js"
+  output   = "@prisma/client"
 }
