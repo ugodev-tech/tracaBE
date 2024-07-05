@@ -1,11 +1,13 @@
 import { Router } from "express";
-import { Onboarding, ForgotPasswordReset} from "../controllers/auth";
-import { IsAuthenticatedUser } from "../support/middleware";
+import { Onboarding, ForgotPasswordReset, UploadFile} from "../controllers/auth";
+import { IsAuthenticatedUser, handlefileUpload, upload } from "../support/middleware";
 
 export const authRouter = Router()
+const uploadMedia = upload.single('file')
 
 authRouter
 .post("/signup", Onboarding.signup)
+.post("/upload-media", uploadMedia,handlefileUpload, UploadFile)
 .post("/login", Onboarding.login)
 .put("/update-profile",IsAuthenticatedUser, Onboarding.updateProfile)
 .post("/resend-activation-token", Onboarding.resendToken)

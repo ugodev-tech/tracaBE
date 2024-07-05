@@ -59,14 +59,14 @@ export async function handlefileUpload(req: Request, res: Response, next: NextFu
 
           const params = {
               Bucket: AWS_BUCKET,
-              Key: `gotruhub/${key}`,
+              Key: `traca/${key}`,
               Body: fieldName, // File content
           };
           // Upload file to S3 bucket
           const command = new PutObjectCommand(params);
           const data = await s3.send(command);
           logger.info(data)
-          filePath = `https://${AWS_BUCKET}.s3.${AWS_REGION}.amazonaws.com/${key}`;
+          filePath = `https://${AWS_BUCKET}.s3.${AWS_REGION}.amazonaws.com/traca/${key}`;
           req.body.file_key = key;
       }
 
