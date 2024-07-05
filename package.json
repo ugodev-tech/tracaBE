@@ -8,7 +8,7 @@
     "dev": "nodemon src/index.ts",
     "test": "export PROJ_ENV=TEST && jest",
     "test:coverage": "jest --coverage",
-    "start": "nodemon src/index.ts",
+    "start": "export NODE_OPTIONS=--max-old-space-size=8192 && nodemon src/index.ts",
     "makemigrations": "npx prisma-multischema && cat schema.txt >> prisma/schema.prisma",
     "migrate": "npx prisma migrate dev --schema=prisma/schema.prisma && npx prisma generate",
     "forever_list": "forever list",
