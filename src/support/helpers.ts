@@ -3,9 +3,10 @@ import nodemailer from "nodemailer"
 import dotenv from "dotenv"
 import fs from "fs"
 import handlebars from "handlebars"
+import { logger } from '../logger'
+import { Token } from '../models/users'
 
 dotenv.config()
-const prisma = new PrismaClient()
 
 export const generateRandomToken = async function(): Promise<number> {
     let token: number=0;
@@ -15,11 +16,7 @@ export const generateRandomToken = async function(): Promise<number> {
     while (codeExists) {
       token = Math.floor(Math.random() * 9000) + 1000; // Generate a 6-digit random number
       // Check if the generated code already exists in the database
-      const existingToken = await prisma.token.findFirst({ 
-        where: {
-            token: token.toString(),
-          }
-       });
+      const existingToken = await Token.findOne({token: token.toString()})
       if (!existingToken) {
         codeExists = false; // Exit the loop if code doesn't exist in the database
       }
@@ -34,36 +31,20 @@ export const generateRandomToken = async function(): Promise<number> {
     const token = await generateRandomToken();
     
     // Find the token record by email
-    const otp = await prisma.token.findFirst({
-        where: {
-            email: email,
-        },
-        select: {
-            id: true, // Include id for potential future use
-            token: true,
-            expires_at: true
-        }
-    });
+    const otp = await Token.findOne({email: email})
 
     // If the token record exists, update it with the new token and expiry date
     if (otp) {
-        await prisma.token.update({
-            where: {
-                id: otp.id // Use the id to uniquely identify the record
-            },
-            data: {
-                token: token.toString(),
-                expires_at: expiryDate
-            }
-        });
+        otp.token = token.toString()
+        otp.expires_at = expiryDate
+        await otp.save()
     }else{
-      await prisma.token.create({
-        data: {
+        const data = {
             email:email,
             token: token.toString(),
             expires_at: expiryDate
-        }
-    });
+        };
+        await Token.create(data)
     }
 
     // Send mail with the new token
@@ -71,9 +52,7 @@ export const generateRandomToken = async function(): Promise<number> {
 }
 
 export async function verifyToken(email:string, token:string): Promise<boolean> {
-    const isEmailToken = await prisma.token.findFirst({
-      where:{email:email, token:token}
-})
+    const isEmailToken = await Token.findOne ({email:email, token:token})
     const currentTime : Date= new Date()
     if (!isEmailToken){
         return false
@@ -83,33 +62,27 @@ export async function verifyToken(email:string, token:string): Promise<boolean> 
     }else{
         const expiryDate= new Date()
         expiryDate.setMinutes(expiryDate.getMinutes() + 10);
-        await prisma.token.update({
-          where: {
-              id: isEmailToken.id // Use the id to uniquely identify the record
-          },
-          data: {
-              token: generateRandomToken().toString(),
-              expires_at: expiryDate
-          }
-      });
+        isEmailToken.token = generateRandomToken().toString();
+        isEmailToken.expires_at = expiryDate;
+        await isEmailToken.save()
         return true
     }
 
     
 }
 
-// export async function ValidateToken(email:string, token:string): Promise<boolean> {
-//     const isEmailToken = await Token.findOne({email:email, token:token})
-//     const currentTime : Date= new Date()
-//     if (!isEmailToken){
-//         return false
-//     }
-//     if (isEmailToken.expires_at < currentTime){
-//         return false
-//     }else{
-//         return true
-//     }
-// }
+export async function ValidateToken(email:string, token:string): Promise<boolean> {
+    const isEmailToken = await Token.findOne ({email:email, token:token})
+    const currentTime : Date= new Date()
+    if (!isEmailToken){
+        return false
+    }
+    if (isEmailToken.expires_at < currentTime){
+        return false
+    }else{
+        return true
+    }
+}
 
 
 const transporter = nodemailer.createTransport({
@@ -142,3 +115,7 @@ export const sendTemplateMail = async (email: string, subject: string, templateP
     // Send the email
     await sentMail(email, subject , compiledHtml);
 };
+
+export function writeErrorsToLogs(error:any) {
+    logger.error(`${error.name}: ${error.message}\n${error.stack}`);
+}
