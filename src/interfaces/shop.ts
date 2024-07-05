@@ -32,6 +32,8 @@ export interface IMenuItem extends Document {
     restaurant:IRestaurant["_id"];
     owner: IUser["_id"];  // Reference to the Restaurant
     itemName: string;
+    coverImage?:Imedia["_id"];
+    images?:[Imedia["_id"]];
     description: string;
     price: number;
     category: ICategory["_id"];

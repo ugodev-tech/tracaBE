@@ -31,3 +31,22 @@ export const updateCategorySchema = Joi.object({
   description: Joi.string().allow(""),
   image: Joi.string().allow(""),
 });
+
+export const MenuItemSchema = Joi.object({
+  restaurant: Joi.string().required(),
+  itemName: Joi.string().required(),
+  description: Joi.string().required(),
+  price: Joi.number().required(),
+  coverImage: Joi.string().optional(),
+  images: Joi.array().items(Joi.string()).optional().unique(),
+  category: Joi.string().required()
+});
+
+export const updateMenuItemSchema = Joi.object({
+  itemName: Joi.string().allow(""),
+  description: Joi.string().allow(""),
+  price: Joi.number().allow(""),
+  coverImage: Joi.string().optional(),
+  images: Joi.array().items(Joi.string()).optional().unique(),
+  category: Joi.string().allow("")
+});

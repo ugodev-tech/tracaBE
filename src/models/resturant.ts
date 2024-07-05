@@ -38,6 +38,8 @@ const MenuItemSchema:Schema<IMenuItem> = new Schema<IMenuItem>({
     itemName: { type: String, required: true },
     description: { type: String, required: true },
     price: { type: Number, required: true },
+    coverImage: { type: Schema.Types.ObjectId, ref: 'Media' },
+    images:[{ type: Schema.Types.ObjectId, ref: 'Media' }],
     category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
   }, { timestamps: true });
 

@@ -1,8 +1,8 @@
 import {Request, Response, NextFunction} from "express"
 import { failedResponse, successResponse } from '../support/http'; 
 import { Media} from '../models/users';
-import { CategorySchema, RestaurantSchema, updateCategorySchema } from "../validator/shopOwner";
-import { Category, Restaurant } from "../models/resturant";
+import { CategorySchema, MenuItemSchema, RestaurantSchema, updateCategorySchema, updateMenuItemSchema } from "../validator/shopOwner";
+import { Category, MenuItem, Restaurant } from "../models/resturant";
 import { writeErrorsToLogs } from "../support/helpers";
 
 export class MyResturant {
@@ -147,7 +147,7 @@ export class CategoryController {
           const regex = new RegExp(search.toString(), 'i'); // Case insensitive regex
           filter.$or = [{ name: regex }, { description: regex }];
         };
-        if ((myShop as string).toLowerCase() === "true") {
+        if ((myShop as string)?.toLowerCase() === "true") {
             filter.owner = (req as any).user._id;
           }
   
@@ -172,4 +172,168 @@ export class CategoryController {
         return failedResponse(res, 500, error.message);
       }
     }
+};
+
+export class MenuItemController {
+  static async createMenuItem(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { error, value } = MenuItemSchema.validate(req.body);
+      if (error) {
+        return failedResponse(res, 400, `${error.details[0].message}`);
+      }
+
+      value.owner = (req as any).user._id;
+
+      if (value.coverImage) {
+        const coverImage = await Media.findById(value.coverImage);
+        if (!coverImage) {
+          return failedResponse(res, 404, 'Cover image media not found.');
+        }
+      };
+      const restaurant = await Restaurant.findById(value.restaurant);
+        if (!restaurant) {
+            return failedResponse(res, 404, 'Restaurant not found.');
+      };
+
+      const category = await Category.findById(value.category);
+        if (!category) {
+            return failedResponse(res, 404, 'category not found.');
+      };
+
+      if(value.images){
+        for(const image of value.images){
+            const imageExist = await Media.findById(image);
+            if (!imageExist) {
+              return failedResponse(res, 404, 'One of the images not found.');
+            };
+        }
+      }
+
+      const newMenuItem = await MenuItem.create(value);
+      return successResponse(res, 201, 'Menu item created successfully', newMenuItem);
+    } catch (error: any) {
+      writeErrorsToLogs(error);
+      return failedResponse(res, 500, error.message);
+    }
   }
+
+  static async retrieveMenuItem(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const menuItem = await MenuItem.findById(id)
+      .populate("coverImage images")
+      .populate(
+        {
+          path:"restaurant",
+          select:"name"
+
+        }
+      )
+      if (!menuItem) {
+        return failedResponse(res, 404, 'Menu item not found.');
+      }
+      return successResponse(res, 200, 'Success', menuItem);
+    } catch (error: any) {
+      writeErrorsToLogs(error);
+      return failedResponse(res, 500, error.message);
+    }
+  }
+
+  static async updateMenuItem(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { error, value } = updateMenuItemSchema.validate(req.body);
+      if (error) {
+        return failedResponse(res, 400, `${error.details[0].message}`);
+      }
+
+      const menuItem = await MenuItem.findOne({ _id: id, owner: (req as any).user._id });
+      if (!menuItem) {
+        return failedResponse(res, 404, 'Menu item not found or you are not the owner.');
+      }
+
+      if (value.coverImage) {
+        const coverImage = await Media.findById(value.coverImage);
+        if (!coverImage) {
+          return failedResponse(res, 404, 'Cover image media not found.');
+        }
+      };
+
+      if(value.images){
+        for(const image of value.images){
+            const imageExist = await Media.findById(image);
+            if (!imageExist) {
+              return failedResponse(res, 404, 'One of the images not found.');
+            };
+        }
+      }
+
+      const updatedMenuItem = await MenuItem.findByIdAndUpdate(id, value, { new: true });
+      return successResponse(res, 200, 'Menu item updated successfully', updatedMenuItem);
+    } catch (error: any) {
+      writeErrorsToLogs(error);
+      return failedResponse(res, 500, error.message);
+    }
+  }
+
+  static async deleteMenuItem(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const menuItem = await MenuItem.findOne({ _id: id, owner: (req as any).user._id });
+      if (!menuItem) {
+        return failedResponse(res, 404, 'Menu item not found or you are not the owner.');
+      }
+
+      const deletedMenuItem = await MenuItem.findByIdAndDelete(id);
+      return successResponse(res, 200, 'Menu item deleted successfully', deletedMenuItem);
+    } catch (error: any) {
+      writeErrorsToLogs(error);
+      return failedResponse(res, 500, error.message);
+    }
+  }
+
+  static async listMenuItems(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { page = 1, pageSize = 10, category, restaurant, myShop } = req.query;
+
+      const filter: any = {};
+      if (category) {
+        filter.category = category;
+      }
+      if (restaurant) {
+        filter.restaurant = restaurant;
+      }
+      if ((myShop as string)?.toLowerCase() === 'true') {
+        filter.owner = (req as any).user._id;
+      }
+
+      const menuItems = await MenuItem.find(filter)
+      .populate("coverImage images")
+      .populate(
+        {
+          path:"restaurant",
+          select:"name"
+
+        }
+      )
+        .skip((Number(page) - 1) * Number(pageSize))
+        .limit(Number(pageSize));
+
+      const totalMenuItems = await MenuItem.countDocuments(filter);
+      const totalPages = Math.ceil(totalMenuItems / Number(pageSize));
+
+      return successResponse(res, 200, 'Success', {
+        menuItems,
+        pagination: {
+          page: Number(page),
+          pageSize: Number(pageSize),
+          totalMenuItems,
+          totalPages,
+        },
+      });
+    } catch (error: any) {
+      writeErrorsToLogs(error);
+      return failedResponse(res, 500, error.message);
+    }
+  }
+}

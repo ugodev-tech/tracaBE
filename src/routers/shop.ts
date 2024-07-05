@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { IsAuthenticatedUser } from "../support/middleware";
-import { CategoryController, MyResturant } from "../controllers/shopOwner";
+import { CategoryController, MenuItemController, MyResturant } from "../controllers/shopOwner";
 
 export const shopRouter = Router()
 
@@ -14,3 +14,10 @@ shopRouter
 .put('/categories/:id', IsAuthenticatedUser,CategoryController.updateCategory)
 .delete('/categories/:id', IsAuthenticatedUser,CategoryController.deleteCategory)
 .get('/categories', IsAuthenticatedUser,CategoryController.listCategories)
+
+// menue
+.post('/menuItems', IsAuthenticatedUser, MenuItemController.createMenuItem)
+.get('/menuItems/:id', IsAuthenticatedUser, MenuItemController.retrieveMenuItem)
+.put('/menuItems/:id', IsAuthenticatedUser, MenuItemController.updateMenuItem)
+.delete('/menuItems/:id', IsAuthenticatedUser, MenuItemController.deleteMenuItem)
+.get('/menuItems', IsAuthenticatedUser, MenuItemController.listMenuItems)

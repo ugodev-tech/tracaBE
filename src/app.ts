@@ -23,7 +23,7 @@ app.use(express.json())
 
 // CONNECT TO DB 
 if (process.env.PROJ_ENV === 'DEV' || process.env.PROJ_ENV === 'PRODUCTION') {
-    Database.getInstance()
+    Database.getInstance();
  }
 app.use("/", authRouter);
 app.use("/", shopRouter)
