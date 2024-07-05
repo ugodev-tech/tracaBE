@@ -6,10 +6,10 @@ import { S3Client,S3ClientConfig, PutObjectCommand } from "@aws-sdk/client-s3"
 import { failedResponse, successResponse } from "./http";
 import crypto from "crypto"
 import { verifyJwtToken } from "./generateTokens";
+import { User } from "../models/users";
 
 dotenv.config()
  
-
 const {PROJ_ENV,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_REGION,AWS_BUCKET} = process.env
 let storage;
 // configure storage for development and production
@@ -77,5 +77,34 @@ export async function handlefileUpload(req: Request, res: Response, next: NextFu
       logger.error(error.message);
       return res.status(500).json({ error: "Internal server error" });
   }
-}
+};
 
+export const IsAuthenticatedUser = async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.headers.authorization) {
+    return failedResponse(res, 401, 'Access denied. Authorization header missing.');
+  }
+
+  const token = req.headers.authorization.split(" ")[1] || req.cookies.token;
+  if (!token) {
+    return failedResponse(res, 401, 'Access denied. No token provided.');
+  }
+
+  try {
+    const decodedToken = verifyJwtToken(token);
+
+    const user = await User.findById(decodedToken.userId);
+    if (!user?.isVerified) {
+      return failedResponse(res, 401, 'Account onboarding is not completed yet, please verify email.');
+    }
+
+    (req as any).user = {
+      email: decodedToken.email,
+      _id: decodedToken.userId,
+      userType: decodedToken.userType
+    };
+    next();
+  } catch (error: any) {
+    logger.error(error.message);
+    return failedResponse(res, 401, 'Invalid access token.');
+  }
+};

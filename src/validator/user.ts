@@ -1,14 +1,32 @@
-import Joi from "joi";
+import Joi from 'joi';
 
 export const userValidator = Joi.object({
-    email: Joi.string().email().required(),
-    phone: Joi.string().required(),
-    password: Joi.string()
-        .required()
-        .min(8) // Minimum length of 8 characters
-        .pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})')) // Password complexity rules
-        .message('Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character.'),
-    name: Joi.string().required()
+  email: Joi.string().email().required(),
+  fullname: Joi.string().required(),
+  password: Joi.string()
+    .required()
+    .min(8) // Minimum length of 8 characters
+    .pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})')) // Password complexity rules
+    .message('Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character.'),
+  userType: Joi.string().valid('shopOwner', 'rider', 'user').required(),
+  personalAddress: Joi.string().allow(""),
+  businessAddress: Joi.string().allow(""),
+  idBack: Joi.string().allow(""),
+  idFront: Joi.string().allow(""),
+  state: Joi.string().allow(""),
+  lga: Joi.string().allow(""),
+  address: Joi.string().allow("")
+});
+
+export const updateUserValidator = Joi.object({
+  fullname: Joi.string().allow(""),
+  personalAddress: Joi.string().allow(""),
+  businessAddress: Joi.string().allow(""),
+  idBack: Joi.string().allow(""),
+  idFront: Joi.string().allow(""),
+  state: Joi.string().allow(""),
+  lga: Joi.string().allow(""),
+  address: Joi.string().allow("")
 });
 
 export const emailValidator = Joi.object({
