@@ -147,11 +147,11 @@ export class CategoryController {
           const regex = new RegExp(search.toString(), 'i'); // Case insensitive regex
           filter.$or = [{ name: regex }, { description: regex }];
         };
-        if (myShop) {
+        if ((myShop as string).toLowerCase() === "true") {
             filter.owner = (req as any).user._id;
           }
   
-        const categories = await Category.find(filter)
+        const categories = await Category.find(filter).populate("image")
           .skip((Number(page) - 1) * Number(pageSize))
           .limit(Number(pageSize));
   
