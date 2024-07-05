@@ -4,19 +4,20 @@ import { IDelivery, IMenuItem, IOrder, IRestaurant } from "../interfaces/shop";
 
 const RestaurantSchema:Schema<IRestaurant> = new Schema<IRestaurant>({
     owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    name: { type: String, required: true },
-    address: { type: String, required: true },
-    phone: { type: String, required: true },
-    email: { type: String, required: true },
+    name: { type: String },
+    image: { type: Schema.Types.ObjectId, ref: 'Media' },
+    address: { type: String },
+    phone: { type: String },
+    email: { type: String },
     openingHours: [{
-      day: { type: String, required: true },
-      open: { type: String, required: true },
-      close: { type: String, required: true },
+      day: { type: String },
+      open: { type: String },
+      close: { type: String },
     }],
-    cuisineType: [{ type: String, required: true }],
+    cuisineType: [{ type: String }],
     location: {
-      lat: { type: String, required: true },
-      long: { type: String, required: true }
+      lat: { type: String },
+      long: { type: String }
     },
     completed: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },

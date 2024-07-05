@@ -1,5 +1,6 @@
 import { Schema, model, Model } from 'mongoose';
 import { IUser, Imedia, Itoken } from '../interfaces/users';
+import { Restaurant } from './resturant';
 
 const UserSchema:Schema<IUser> = new Schema<IUser>({
     fullname: String,
@@ -17,6 +18,18 @@ const UserSchema:Schema<IUser> = new Schema<IUser>({
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
   }, { timestamps: true });
+
+UserSchema.pre("save", async function (next){
+  if (this.isNew && this.userType === "shopOwner"){
+    // check if the user has a resturant. else pass;
+    const userShop = await Restaurant.findOne({owner:this._id}).select("_id");
+    if (userShop){
+      return;
+    }else{
+      await Restaurant.create({owner:this._id})
+    }
+  }
+})
 
 const MediaSchema :Schema<Imedia> = new Schema<Imedia>({
     file:{

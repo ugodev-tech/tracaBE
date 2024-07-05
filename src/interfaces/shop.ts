@@ -4,6 +4,7 @@ import { IUser, Imedia } from './users';
 export interface IRestaurant extends Document {
   owner: IUser["_id"]; // Reference to the User who owns the restaurant
   name: string;
+  image?:Imedia["_id"]
   address: string;
   phone: string;
   email: string;
