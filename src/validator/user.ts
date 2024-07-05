@@ -56,4 +56,8 @@ export const resetPasswordValidator=Joi.object({
         .message('Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character.'),
   token: Joi.string().min(4).max(4).required(),
 
+});
+export const ChangePasswordInDashboardValidator=Joi.object({
+  oldPassword: Joi.string().min(6).required(),
+  newPassword: Joi.string().min(6).required(),
 })

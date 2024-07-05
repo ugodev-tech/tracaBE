@@ -1,5 +1,5 @@
 import { Model, Schema, model } from "mongoose";
-import { IDelivery, IMenuItem, IOrder, IRestaurant } from "../interfaces/shop";
+import { ICategory, IDelivery, IMenuItem, IOrder, IRestaurant } from "../interfaces/shop";
 
 
 const RestaurantSchema:Schema<IRestaurant> = new Schema<IRestaurant>({
@@ -22,6 +22,14 @@ const RestaurantSchema:Schema<IRestaurant> = new Schema<IRestaurant>({
     completed: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
+  }, { timestamps: true });
+
+const CategorySchema:Schema<ICategory> = new Schema<ICategory>({
+    restaurant: { type: Schema.Types.ObjectId, ref: 'Restaurant', required: true },
+    owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    name: { type: String, required: true },
+    description: String,
+    image: { type: Schema.Types.ObjectId, ref: 'Media' },
   }, { timestamps: true });
 
 const MenuItemSchema:Schema<IMenuItem> = new Schema<IMenuItem>({
@@ -65,5 +73,6 @@ const DeliverySchema:Schema<IDelivery> = new Schema<IDelivery>({
 
 export const Delivery:Model<IDelivery> = model<IDelivery>('Delivery', DeliverySchema);   
 export const Order:Model<IOrder> = model<IOrder>('Order', OrderSchema);
+export const Category:Model<ICategory> = model<ICategory>('Category', CategorySchema);
 export const MenuItem:Model<IMenuItem> = model<IMenuItem>('MenuItem', MenuItemSchema);
 export const Restaurant:Model<IRestaurant> = model<IRestaurant>('Restaurant', RestaurantSchema);

@@ -15,3 +15,4 @@ authRouter
 .post("/forgotten-password/get-reset-token", ForgotPasswordReset.sendResetToken)
 .post("/forgotten-password/validate-token", ForgotPasswordReset.validateToken)
 .post("/forgotten-password/change-password", ForgotPasswordReset.changePassword)
+.post("/forgotten-password/dashboard/change-password",IsAuthenticatedUser, ForgotPasswordReset.changePasswordInDashBoard)

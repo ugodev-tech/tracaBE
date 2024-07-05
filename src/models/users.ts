@@ -28,7 +28,8 @@ UserSchema.pre("save", async function (next){
     }else{
       await Restaurant.create({owner:this._id})
     }
-  }
+  };
+  next()
 })
 
 const MediaSchema :Schema<Imedia> = new Schema<Imedia>({

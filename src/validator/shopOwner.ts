@@ -18,3 +18,16 @@ export const RestaurantSchema = Joi.object({
       long: Joi.string().allow("")
     }).allow("")
   });
+
+export const CategorySchema = Joi.object({
+  restaurant: Joi.string().required(),
+  name: Joi.string().required(),
+  description: Joi.string().allow(""),
+  image: Joi.string().allow(""),
+});
+
+export const updateCategorySchema = Joi.object({
+  name: Joi.string().allow(""),
+  description: Joi.string().allow(""),
+  image: Joi.string().allow(""),
+});

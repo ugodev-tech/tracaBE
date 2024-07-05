@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client'
 import {Application, Request, Response, NextFunction} from "express"
 import { failedResponse, successResponse } from '../support/http'; 
 import { httpLogger } from '../httpLogger';
-import { emailValidator, emailVerificationValidator, loginValidator, resetPasswordValidator, updateUserValidator, userValidator } from '../validator/user';
+import { ChangePasswordInDashboardValidator, emailValidator, emailVerificationValidator, loginValidator, resetPasswordValidator, updateUserValidator, userValidator } from '../validator/user';
 import { logger } from '../logger';
 import { OtpToken, ValidateToken, verifyToken, writeErrorsToLogs } from '../support/helpers';
 import { generateJwtToken } from '../support/generateTokens';
@@ -235,6 +235,27 @@ export class ForgotPasswordReset {
       return failedResponse(res,500, error.message)
     }
   
+  };
+  static async changePasswordInDashBoard(req: Request, res: Response, next: NextFunction) {
+      try {
+          const { error, value } = ChangePasswordInDashboardValidator.validate(req.body);
+          if (error) {
+          return failedResponse(res, 400, `${error.details[0].message}`);
+          }
+        
+          const userExist = await User.findById((req as any).user._id).select("password")
+          if (!userExist) return failedResponse(res, 404, "User with this email does not exists.");
+          const verifyPassword = await bcrypt.compare(value.oldPassword, userExist.password)
+          if (!verifyPassword) return failedResponse(res, 400, "Incorrect old password.");
+          value.newPassword = await bcrypt.hash(value.newPassword, 10);
+          userExist.password = value.newPassword;
+          await userExist.save()
+          return successResponse(res, 200, "Password updated successfully.");
+          
+      } catch (error: any) {
+          writeErrorsToLogs(error);
+          return failedResponse(res, 500, error.message);
+      }
   };
 };
 
