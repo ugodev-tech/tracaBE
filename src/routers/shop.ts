@@ -30,6 +30,7 @@ shopRouter
 // orders
 .get("/orders",IsAdmin, OrderController.getAllOrders )
 .get("/orders/:orderNumber",IsAuthenticatedUser, OrderController.getOrderByOrderNum )
+.put("/orders/:orderNumber",IsAdmin, OrderController.updateOrderById )
 .delete("/orders/:orderNumber",IsAuthenticatedUser, OrderController.deleteOrderById )
 
 // sub orders

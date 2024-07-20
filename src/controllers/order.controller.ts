@@ -3,7 +3,7 @@ import { failedResponse, successResponse } from '../support/http';
 import { CategorySchema, MenuItemSchema, RestaurantSchema, updateCategorySchema, updateMenuItemSchema } from "../validator/shopOwner";
 import { Category, MenuItem, Order, Restaurant, SubOrder } from "../models/resturant";
 import { writeErrorsToLogs } from "../support/helpers";
-import { payloadSchema } from "../validator/orderSchema";
+import { payloadSchema, updateOrderSchema } from "../validator/orderSchema";
 
 export class OrderController {
     static async checkout(req: Request, res: Response, next: NextFunction) {
@@ -170,12 +170,37 @@ export class OrderController {
         }
     };
 
+    // Update suborder by ID
+    static async updateOrderById(req: Request, res: Response, next: NextFunction) {
+        const user = (req as any).user;
+        const role = user.userType;
+        try {
+
+            const { error, value } = updateOrderSchema.validate(req.body);
+            if (error) return failedResponse(res, 400, `${error.details[0].message}`);
+
+            const order = await Order.findOneAndUpdate({orderNumber:req.params.orderNumber}, value, {new:true})
+
+            if (!order) {
+                return failedResponse(res, 404, "SubOrder not found");
+            }
+
+            if (role === "user" && order.user.toString() !== user._id.toString()) {
+                return failedResponse(res, 403, "Permission denied. Access to this suborder is restricted.");
+            }
+
+            return successResponse(res, 200, "Order updated successfully", order);
+        } catch (error: any) {
+            writeErrorsToLogs(error);
+            return failedResponse(res, 500, error.message);
+        }
+    };
     // Delete suborder by ID
     static async deleteOrderById(req: Request, res: Response, next: NextFunction) {
         const user = (req as any).user;
         const role = user.userType;
         try {
-            const { orderNumber } = req.params;
+
             const order = await Order.findOneAndDelete({orderNumber:req.params.orderNumber})
 
             if (!order) {
