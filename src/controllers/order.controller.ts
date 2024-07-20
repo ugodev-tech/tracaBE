@@ -69,7 +69,7 @@ export class OrderController {
             // Create the main order
             const order = new Order({
                 user: user._id,
-                subOrders: subOrderIds,
+                subOrder: subOrderIds,
                 totalPrice: totalAmount,
                 status: 'pending',
                 deliveryLocation: value.deliveryLocation // Assuming deliveryLocation is part of the payload
@@ -82,7 +82,116 @@ export class OrderController {
             writeErrorsToLogs(error);
             return failedResponse(res, 500, error.message);
         }
-    }
+    };
+    // order
+    // Admin only
+    static async getAllOrders(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { status, subOrderId,restaurantId, page = 1, pageSize = 10 } = req.query;
+
+            const filter: any = {};
+            if (status) filter.status = status;
+            
+            if (subOrderId) {
+                filter.subOrder = { $in: subOrderId };
+            }
+
+            const skip = (Number(page) - 1) * Number(pageSize);
+            const totalSubOrders = await SubOrder.countDocuments(filter);
+            const totalPages = Math.ceil(totalSubOrders / Number(pageSize));
+
+            const orders = await Order.find(filter)
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(Number(pageSize))
+                .populate({
+                    path: 'dispatchRider',
+                    select: 'fullname'
+                })
+                .populate({
+                    path: 'user',
+                    select: 'fullname'
+                });
+
+
+            return successResponse(res, 200, "Success", {
+                orders,
+                pagination: {
+                    totalSubOrders,
+                    totalPages,
+                    currentPage: Number(page),
+                    pageSize: Number(pageSize)
+                }
+            });
+        } catch (error: any) {
+            writeErrorsToLogs(error);
+            return failedResponse(res, 500, error.message);
+        }
+    };
+
+    // Get suborder by ID
+    static async getOrderByOrderNum(req: Request, res: Response, next: NextFunction) {
+        const user = (req as any).user;
+        const role = user.userType;
+        try {
+            const { orderNumber } = req.params;
+            const order = await Order.findOne({orderNumber:req.params.orderNumber})
+            .populate({
+                path: 'subOrder',
+                populate: [
+                    {
+                        path: 'restaurant',
+                        select: 'name'
+                    },
+                    {
+                        path: 'items.menuItem',
+                        select: 'itemName'
+                    }
+                ],
+                select: 'subTotal'
+            })
+            .populate({
+                path: 'dispatchRider',
+                select: 'fullname'
+            });
+
+            if (!order) {
+                return failedResponse(res, 404, "Order not found");
+            }
+
+            if (role === "user" && order.user.toString() !== user._id.toString()) {
+                return failedResponse(res, 403, "Permission denied. Access to this suborder is restricted.");
+            }
+
+            return successResponse(res, 200, "Success", order);
+        } catch (error: any) {
+            writeErrorsToLogs(error);
+            return failedResponse(res, 500, error.message);
+        }
+    };
+
+    // Delete suborder by ID
+    static async deleteOrderById(req: Request, res: Response, next: NextFunction) {
+        const user = (req as any).user;
+        const role = user.userType;
+        try {
+            const { orderNumber } = req.params;
+            const order = await Order.findOneAndDelete({orderNumber:req.params.orderNumber})
+
+            if (!order) {
+                return failedResponse(res, 404, "SubOrder not found");
+            }
+
+            if (role === "user" && order.user.toString() !== user._id.toString()) {
+                return failedResponse(res, 403, "Permission denied. Access to this suborder is restricted.");
+            }
+
+            return successResponse(res, 204, "Order deleted successfully");
+        } catch (error: any) {
+            writeErrorsToLogs(error);
+            return failedResponse(res, 500, error.message);
+        }
+    };
 };
 
 

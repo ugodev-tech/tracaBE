@@ -62,6 +62,7 @@ const MenuItemSchema:Schema<IMenuItem> = new Schema<IMenuItem>({
 const OrderSchema:Schema<IOrder> = new Schema<IOrder>({
     orderNumber:String,
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    subOrder: [{ type: Schema.Types.ObjectId, ref: 'SubOrder', required: true }],
     totalPrice: { type: Number, required: true },
     status: { type: String, required: false, enum: ['pending', 'accepted', 'inDelivery', 'delivered', 'cancelled'], default: 'pending' },
     dispatchRider: { type: Schema.Types.ObjectId, ref: 'User' },

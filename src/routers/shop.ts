@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { IsAdminOrShopOwner, IsAuthenticatedUser } from "../support/middleware";
+import { IsAdmin, IsAdminOrShopOwner, IsAuthenticatedUser } from "../support/middleware";
 import { CategoryController, MenuItemController, MyResturant } from "../controllers/shopOwner";
 import { SubOrderController, OrderController } from "../controllers/order.controller";
 
@@ -26,6 +26,11 @@ shopRouter
 
 // checkout 
 .post("/checkout",IsAuthenticatedUser, OrderController.checkout)
+
+// orders
+.get("/orders",IsAdmin, OrderController.getAllOrders )
+.get("/orders/:orderNumber",IsAuthenticatedUser, OrderController.getOrderByOrderNum )
+.delete("/orders/:orderNumber",IsAuthenticatedUser, OrderController.deleteOrderById )
 
 // sub orders
 .get("/suborders",IsAdminOrShopOwner, SubOrderController.getAllSubOrders )

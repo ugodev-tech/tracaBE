@@ -143,3 +143,37 @@ export const IsAdminOrShopOwner = async (req: Request, res: Response, next: Next
     return failedResponse(res, 401, 'Invalid access token.');
   }
 };
+
+export const IsAdmin = async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.headers.authorization) {
+    return failedResponse(res, 401, 'Access denied. Authorization header missing.');
+  }
+
+  const token = req.headers.authorization.split(" ")[1] || req.cookies.token;
+  if (!token) {
+    return failedResponse(res, 401, 'Access denied. No token provided.');
+  }
+
+  try {
+    const decodedToken = verifyJwtToken(token);
+
+    const user = await User.findById(decodedToken.userId);
+    if (!user?.isVerified) {
+      return failedResponse(res, 401, 'Account onboarding is not completed yet, please verify email.');
+    }
+
+    if (user.userType !== "admin") {
+      return failedResponse(res, 403, 'Permission denied. Only accessible by admin.');
+    }
+
+    (req as any).user = {
+      email: decodedToken.email,
+      _id: decodedToken.userId,
+      userType: decodedToken.userType
+    };
+    next();
+  } catch (error: any) {
+    writeErrorsToLogs(error.message)
+    return failedResponse(res, 401, 'Invalid access token.');
+  }
+};
