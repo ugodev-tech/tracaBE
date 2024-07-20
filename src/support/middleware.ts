@@ -162,9 +162,9 @@ export const IsAdmin = async (req: Request, res: Response, next: NextFunction) =
       return failedResponse(res, 401, 'Account onboarding is not completed yet, please verify email.');
     }
 
-    // if (user.userType !== "admin") {
-    //   return failedResponse(res, 403, 'Permission denied. Only accessible by admin.');
-    // }
+    if (user.userType !== "admin") {
+      return failedResponse(res, 403, 'Permission denied. Only accessible by admin.');
+    }
 
     (req as any).user = {
       email: decodedToken.email,
