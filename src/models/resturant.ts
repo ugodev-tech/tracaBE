@@ -54,7 +54,7 @@ const MenuItemSchema:Schema<IMenuItem> = new Schema<IMenuItem>({
         price: { type: Number, required: true },
     }],
     subTotal: { type: Number, required: true },
-    status: { type: String, required: false, enum: ['pending', 'accepted', 'inDelivery', 'delivered', 'cancelled'], default: 'pending' },
+    status: { type: String, required: false, enum: ['pending', 'accepted', 'indelivery', 'delivered', 'cancelled'], default: 'pending' },
     dispatchRider: { type: Schema.Types.ObjectId, ref: 'User' },
     deliveryLocation: { type: String, required: true }
     }, { timestamps: true });
@@ -64,7 +64,7 @@ const OrderSchema:Schema<IOrder> = new Schema<IOrder>({
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     subOrder: [{ type: Schema.Types.ObjectId, ref: 'SubOrder', required: true }],
     totalPrice: { type: Number, required: true },
-    status: { type: String, required: false, enum: ['pending', 'accepted', 'inDelivery', 'delivered', 'cancelled'], default: 'pending' },
+    status: { type: String, required: false, enum: ['pending', 'accepted', 'indelivery', 'delivered', 'cancelled'], default: 'pending' },
     dispatchRider: { type: Schema.Types.ObjectId, ref: 'User' },
     deliveryLocation: { type: String, required: true }
     }, { timestamps: true });
@@ -92,10 +92,14 @@ const DeliverySchema:Schema<IDelivery> = new Schema<IDelivery>({
     order: { type: Schema.Types.ObjectId, ref: 'Order', required: true },
     dispatchRider: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     currentLocation: {
-        lat: { type: String, required: true },
-        long: { type: String, required: true }
+        lat: { type: String },
+        long: { type: String }
     },
-    status: { type: String, required: true, enum: ['onRoute', 'delivered'], default: 'onRoute' },
+    coordinates: [{
+        lat: { type: String },
+        long: { type: String }
+    }],
+    status: { type: String, enum: ['onRoute', 'delivered'], default: 'onRoute' },
     }, { timestamps: true });
 
 export const Delivery:Model<IDelivery> = model<IDelivery>('Delivery', DeliverySchema);   

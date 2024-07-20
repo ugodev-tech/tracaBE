@@ -1,7 +1,7 @@
 import {Request, Response, NextFunction} from "express"
 import { failedResponse, successResponse } from '../support/http'; 
 import { CategorySchema, MenuItemSchema, RestaurantSchema, updateCategorySchema, updateMenuItemSchema } from "../validator/shopOwner";
-import { Category, MenuItem, Order, Restaurant, SubOrder } from "../models/resturant";
+import { Category, Delivery, MenuItem, Order, Restaurant, SubOrder } from "../models/resturant";
 import { writeErrorsToLogs } from "../support/helpers";
 import { payloadSchema, updateOrderSchema } from "../validator/orderSchema";
 
@@ -175,26 +175,33 @@ export class OrderController {
         const user = (req as any).user;
         const role = user.userType;
         try {
-
             const { error, value } = updateOrderSchema.validate(req.body);
             if (error) return failedResponse(res, 400, `${error.details[0].message}`);
-
-            const order = await Order.findOneAndUpdate({orderNumber:req.params.orderNumber}, value, {new:true})
-
+    
+            const order = await Order.findOneAndUpdate({ orderNumber: req.params.orderNumber }, value, { new: true });
+    
             if (!order) {
-                return failedResponse(res, 404, "SubOrder not found");
+                return failedResponse(res, 404, "Order not found");
             }
-
+    
             if (role === "user" && order.user.toString() !== user._id.toString()) {
-                return failedResponse(res, 403, "Permission denied. Access to this suborder is restricted.");
+                return failedResponse(res, 403, "Permission denied. Access to this order is restricted.");
             }
-
+    
+            if (value.dispatchRider) {
+                const deliveryInstance = await Delivery.findOneAndUpdate({ order: order._id, dispatchRider: value.dispatchRider}, { dispatchRider: value.dispatchRider });
+                if (!deliveryInstance) {
+                    await Delivery.create({ order: order._id, dispatchRider: value.dispatchRider });
+                }
+            }
+    
             return successResponse(res, 200, "Order updated successfully", order);
         } catch (error: any) {
             writeErrorsToLogs(error);
             return failedResponse(res, 500, error.message);
         }
     };
+    
     // Delete suborder by ID
     static async deleteOrderById(req: Request, res: Response, next: NextFunction) {
         const user = (req as any).user;

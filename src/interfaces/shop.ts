@@ -1,4 +1,4 @@
-import { Schema, model, Document, Types } from 'mongoose';
+import { Schema, model, Document, Types, ObjectId } from 'mongoose';
 import { IUser, Imedia } from './users';
 
 export interface IRestaurant extends Document {
@@ -69,9 +69,10 @@ export interface IOrder extends Document {
   };
 
 export interface IDelivery extends Document {
-    order:Schema.Types.ObjectId; // Reference to the Order
+    order:IOrder | ObjectId; // Reference to the Order
     dispatchRider: Schema.Types.ObjectId;// Reference to the User who is the dispatch rider
     currentLocation: { lat: string; long: string };
+    coordinates: [ { lat: string; long: string }];
     status: 'onRoute' | 'delivered';
     createdAt: Date;
     updatedAt: Date;
