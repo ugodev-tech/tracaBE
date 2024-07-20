@@ -19,6 +19,7 @@ shopRouter
 // menue
 .post('/menuItems', IsAuthenticatedUser, MenuItemController.createMenuItem)
 .get('/menuItems/:id', IsAuthenticatedUser, MenuItemController.retrieveMenuItem)
+.get('/menuItems/resturant/:restaurantId', IsAuthenticatedUser, MenuItemController.retrieveMenuItemByResturant)
 .put('/menuItems/:id', IsAuthenticatedUser, MenuItemController.updateMenuItem)
 .delete('/menuItems/:id', IsAuthenticatedUser, MenuItemController.deleteMenuItem)
 .get('/menuItems', IsAuthenticatedUser, MenuItemController.listMenuItems)

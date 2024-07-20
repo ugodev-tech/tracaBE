@@ -215,7 +215,27 @@ export class MenuItemController {
       writeErrorsToLogs(error);
       return failedResponse(res, 500, error.message);
     }
-  }
+  };
+  static async retrieveMenuItemByResturant(req: Request, res: Response, next: NextFunction) {
+    try {
+      const menuItem = await MenuItem.find({restaurant:req.params.restaurantId})
+      .populate("coverImage images")
+      .populate(
+        {
+          path:"restaurant",
+          select:"name"
+
+        }
+      )
+      if (!menuItem) {
+        return failedResponse(res, 404, 'Menus item not found.');
+      }
+      return successResponse(res, 200, 'Success', menuItem);
+    } catch (error: any) {
+      writeErrorsToLogs(error);
+      return failedResponse(res, 500, error.message);
+    }
+  };
 
   static async retrieveMenuItem(req: Request, res: Response, next: NextFunction) {
     try {
@@ -237,7 +257,7 @@ export class MenuItemController {
       writeErrorsToLogs(error);
       return failedResponse(res, 500, error.message);
     }
-  }
+  };
 
   static async updateMenuItem(req: Request, res: Response, next: NextFunction) {
     try {
