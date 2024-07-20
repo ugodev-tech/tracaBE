@@ -1,4 +1,18 @@
 import Joi from 'joi';
+import mongoose from 'mongoose';
+
+export const objectIdValidator =Joi.extend((Joi)=>({
+  type: 'objectId',
+  base: Joi.string(),
+  messages: {
+    'objectId.invalid': 'objectId should be a valid id',
+  },
+  validate(value, helpers) {
+    if (!mongoose.Types.ObjectId.isValid(value)) {
+      return { value, errors: helpers.error('objectId.invalid') };
+    }
+  },
+}))
 
 export const userValidator = Joi.object({
   email: Joi.string().email().required(),

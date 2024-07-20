@@ -2,9 +2,9 @@ import { Schema, model, Document, Types } from 'mongoose';
 import { IUser, Imedia } from './users';
 
 export interface IRestaurant extends Document {
-  owner: IUser["_id"]; // Reference to the User who owns the restaurant
+  owner: Schema.Types.ObjectId;// Reference to the User who owns the restaurant
   name: string;
-  image?:Imedia["_id"]
+  image?:Schema.Types.ObjectId
   address: string;
   phone: string;
   email: string;
@@ -21,43 +21,56 @@ export interface IRestaurant extends Document {
 };
 
 export interface ICategory extends Document {
-    restaurant:IRestaurant["_id"];
-    owner: IUser["_id"];
+    restaurant:Schema.Types.ObjectId;
+    owner: Schema.Types.ObjectId
     name: string;
     description?: string;
-    image?:Imedia["_id"]
+    image?:Schema.Types.ObjectId;
   };
 
 export interface IMenuItem extends Document {
-    restaurant:IRestaurant["_id"];
-    owner: IUser["_id"];  // Reference to the Restaurant
+    _id?:string;
+    restaurant:Schema.Types.ObjectId;
+    owner: Schema.Types.ObjectId; // Reference to the Restaurant
     itemName: string;
-    coverImage?:Imedia["_id"];
-    images?:[Imedia["_id"]];
+    coverImage?:Schema.Types.ObjectId;
+    images?:Schema.Types.ObjectId[];
     description: string;
     price: number;
-    category: ICategory["_id"];
+    category: Schema.Types.ObjectId
+  };
+
+export interface ISubOrder extends Document {
+    user: Schema.Types.ObjectId; // Reference to the User who placed the order
+    shopOwnerId: Schema.Types.ObjectId; // Reference to the User who placed the order
+    restaurant: Schema.Types.ObjectId;  // Reference to the Restaurant
+    items: {
+      menuItem: Schema.Types.ObjectId  // Reference to MenuItem
+      quantity: number;
+    }[];
+    subTotal: number;
+    status?: 'pending' | 'accepted' | 'inDelivery' | 'delivered' | 'cancelled';
+    dispatchRider?: Schema.Types.ObjectId; // Reference to the User who is the dispatch rider
+    deliveryLocation: { type: string, required: true }
+    createdAt: Date;
+    updatedAt: Date;
   };
 
 export interface IOrder extends Document {
-    user: IUser["_id"];  // Reference to the User who placed the order
-    restaurant: IRestaurant["_id"];  // Reference to the Restaurant
-    items: {
-      menuItem: IMenuItem["_id"];  // Reference to MenuItem
-      quantity: number;
-      price: number;
-    }[];
+    orderNumber:string ;
+    user: Schema.Types.ObjectId; // Reference to the User who placed the order
+    subOrder: Schema.Types.ObjectId[];
     totalPrice: number;
     status: 'pending' | 'accepted' | 'inDelivery' | 'delivered' | 'cancelled';
-    dispatchRider?: IUser["_id"];  // Reference to the User who is the dispatch rider
-    deliveryLocation: { lat: string; long: string };
+    dispatchRider?: Schema.Types.ObjectId; // Reference to the User who is the dispatch rider
+    deliveryLocation: { type: string, required: true }
     createdAt: Date;
     updatedAt: Date;
   };
 
 export interface IDelivery extends Document {
-    order: IOrder["_id"];   // Reference to the Order
-    dispatchRider: IUser["_id"]; // Reference to the User who is the dispatch rider
+    order:Schema.Types.ObjectId; // Reference to the Order
+    dispatchRider: Schema.Types.ObjectId;// Reference to the User who is the dispatch rider
     currentLocation: { lat: string; long: string };
     status: 'onRoute' | 'delivered';
     createdAt: Date;

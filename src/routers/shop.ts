@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { IsAuthenticatedUser } from "../support/middleware";
+import { IsAdmin, IsAdminOrShopOwner, IsAuthenticatedUser } from "../support/middleware";
 import { CategoryController, MenuItemController, MyResturant } from "../controllers/shopOwner";
+import { SubOrderController, OrderController } from "../controllers/order.controller";
 
 export const shopRouter = Router()
 
@@ -18,6 +19,22 @@ shopRouter
 // menue
 .post('/menuItems', IsAuthenticatedUser, MenuItemController.createMenuItem)
 .get('/menuItems/:id', IsAuthenticatedUser, MenuItemController.retrieveMenuItem)
+.get('/menuItems/resturant/:restaurantId', IsAuthenticatedUser, MenuItemController.retrieveMenuItemByResturant)
 .put('/menuItems/:id', IsAuthenticatedUser, MenuItemController.updateMenuItem)
 .delete('/menuItems/:id', IsAuthenticatedUser, MenuItemController.deleteMenuItem)
 .get('/menuItems', IsAuthenticatedUser, MenuItemController.listMenuItems)
+
+
+// checkout 
+.post("/checkout",IsAuthenticatedUser, OrderController.checkout)
+
+// orders
+.get("/orders",IsAdmin, OrderController.getAllOrders )
+.get("/orders/:orderNumber",IsAuthenticatedUser, OrderController.getOrderByOrderNum )
+.put("/orders/:orderNumber",IsAdmin, OrderController.updateOrderById )
+.delete("/orders/:orderNumber",IsAuthenticatedUser, OrderController.deleteOrderById )
+
+// sub orders
+.get("/suborders",IsAdminOrShopOwner, SubOrderController.getAllSubOrders )
+.get("/suborders/:id",IsAdminOrShopOwner, SubOrderController.getSubOrderById )
+.delete("/suborders/:id",IsAdminOrShopOwner, SubOrderController.deleteSubOrderById )
