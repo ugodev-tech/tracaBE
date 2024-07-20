@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { IsAuthenticatedUser } from "../support/middleware";
+import { IsAdminOrShopOwner, IsAuthenticatedUser } from "../support/middleware";
 import { CategoryController, MenuItemController, MyResturant } from "../controllers/shopOwner";
+import { SubOrderController, OrderController } from "../controllers/order.controller";
 
 export const shopRouter = Router()
 
@@ -21,3 +22,12 @@ shopRouter
 .put('/menuItems/:id', IsAuthenticatedUser, MenuItemController.updateMenuItem)
 .delete('/menuItems/:id', IsAuthenticatedUser, MenuItemController.deleteMenuItem)
 .get('/menuItems', IsAuthenticatedUser, MenuItemController.listMenuItems)
+
+
+// checkout 
+.post("/checkout",IsAuthenticatedUser, OrderController.checkout)
+
+// sub orders
+.get("/suborders",IsAdminOrShopOwner, SubOrderController.getAllSubOrders )
+.get("/suborders/:id",IsAdminOrShopOwner, SubOrderController.getSubOrderById )
+.delete("/suborders/:id",IsAdminOrShopOwner, SubOrderController.deleteSubOrderById )
