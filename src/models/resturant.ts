@@ -1,6 +1,9 @@
-import { Model, Schema, model } from "mongoose";
+import { Model, Schema, Types, model } from "mongoose";
 import { ICategory, IDelivery, IMenuItem, IOrder, IRestaurant, ISubOrder } from "../interfaces/shop";
 import { generateRandomAlphNumeric } from "../support/helpers";
+import { createNotification } from "../notification/helpers";
+import { CreateNotificationParams } from "../interfaces/notification";
+import { User } from "./users";
 
 
 const RestaurantSchema:Schema<IRestaurant> = new Schema<IRestaurant>({
@@ -44,7 +47,7 @@ const MenuItemSchema:Schema<IMenuItem> = new Schema<IMenuItem>({
     category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
   }, { timestamps: true });
 
-  const subOrderSchema:Schema<ISubOrder> = new Schema<ISubOrder>({
+const subOrderSchema:Schema<ISubOrder> = new Schema<ISubOrder>({
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     restaurant: { type: Schema.Types.ObjectId, ref: 'Restaurant', required: true },
     shopOwnerId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
@@ -58,6 +61,18 @@ const MenuItemSchema:Schema<IMenuItem> = new Schema<IMenuItem>({
     dispatchRider: { type: Schema.Types.ObjectId, ref: 'User' },
     deliveryLocation: { type: String, required: true }
     }, { timestamps: true });
+
+subOrderSchema.pre("save", async function name(next) {
+  if(this.isNew){
+    const payload: CreateNotificationParams = {
+      owner: this.shopOwnerId.toString(),
+      title: "New order",
+      type: `order`,
+      message: `A new order just came in. `
+    };
+    await createNotification(payload);
+  }
+})
 
 const OrderSchema:Schema<IOrder> = new Schema<IOrder>({
     orderNumber:String,
@@ -80,6 +95,17 @@ OrderSchema.pre("save", async function (next) {
         orderNumberExist = false;
         this.orderNumber = newNum;
       }
+    };
+    // send notifications to admins
+    const admins = await User.find({userType:"admin"});
+    for (const admin of admins){
+      const payload: CreateNotificationParams = {
+        owner: (admin._id as Types.ObjectId).toString(),
+        title: "New order",
+        type: `order`,
+        message: `A new order just came in. Please assign a rider. `
+      };
+      await createNotification(payload);
     }
     
   }
@@ -101,6 +127,23 @@ const DeliverySchema:Schema<IDelivery> = new Schema<IDelivery>({
     }],
     status: { type: String, enum: ['onRoute', 'delivered'], default: 'onRoute' },
     }, { timestamps: true });
+
+DeliverySchema.pre("save", async function name(next) {
+      if(this.isNew){
+        const order = await Order.findById(this.order);
+        const user = await User.findById(order?.user);
+        if(user?.fcmToken){
+          const payload: CreateNotificationParams = {
+            owner: (user._id as Types.ObjectId).toString(),
+            title: "New order",
+            type: `order`,
+            message: `Your order with id ${order?.orderNumber} is now ${this.status}.`
+          };
+          await createNotification(payload);
+        }
+        
+      }
+    })
 
 export const Delivery:Model<IDelivery> = model<IDelivery>('Delivery', DeliverySchema);   
 export const Order:Model<IOrder> = model<IOrder>('Order', OrderSchema);

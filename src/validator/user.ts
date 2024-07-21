@@ -58,6 +58,7 @@ export const emailVerificationValidator=Joi.object({
 export const loginValidator=Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().required(),
+  fcmToken:Joi.string().allow(""),
 
 })
 

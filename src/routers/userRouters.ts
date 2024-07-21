@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { Onboarding, ForgotPasswordReset, UploadFile} from "../controllers/auth";
 import { IsAuthenticatedUser, handlefileUpload, upload } from "../support/middleware";
+import { NotificationController } from "../controllers/notification";
 
 export const authRouter = Router()
 const uploadMedia = upload.single('file')
@@ -16,3 +17,7 @@ authRouter
 .post("/forgotten-password/validate-token", ForgotPasswordReset.validateToken)
 .post("/forgotten-password/change-password", ForgotPasswordReset.changePassword)
 .post("/forgotten-password/dashboard/change-password",IsAuthenticatedUser, ForgotPasswordReset.changePasswordInDashBoard)
+// notifications
+.get("/notification", IsAuthenticatedUser, NotificationController.myNotifications)
+.put("/notification", IsAuthenticatedUser, NotificationController.markAllAsRead)
+.put("/notification/:id", IsAuthenticatedUser, NotificationController.markSingleAsRead)

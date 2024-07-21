@@ -4,6 +4,8 @@ import { CategorySchema, MenuItemSchema, RestaurantSchema, updateCategorySchema,
 import { Category, Delivery, MenuItem, Order, Restaurant, SubOrder } from "../models/resturant";
 import { writeErrorsToLogs } from "../support/helpers";
 import { payloadSchema, updateOrderSchema } from "../validator/orderSchema";
+import { CreateNotificationParams } from "../interfaces/notification";
+import { createNotification } from "../notification/helpers";
 
 export class OrderController {
     static async checkout(req: Request, res: Response, next: NextFunction) {
@@ -200,7 +202,14 @@ export class OrderController {
                 const deliveryInstance = await Delivery.findOneAndUpdate({ order: order._id, dispatchRider: value.dispatchRider}, { dispatchRider: value.dispatchRider });
                 if (!deliveryInstance) {
                     await Delivery.create({ order: order._id, dispatchRider: value.dispatchRider });
-                }
+                };
+                const payload: CreateNotificationParams = {
+                    owner: value.dispatchRider.toString(),
+                    title: "New delivery",
+                    type: `delivery`,
+                    message: `You have a new order to deliver at ${order?.deliveryLocation}.`
+                  };
+                  await createNotification(payload);
             }
     
             return successResponse(res, 200, "Order updated successfully", order);

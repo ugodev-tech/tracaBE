@@ -13,6 +13,7 @@ export interface IUser extends Document {
   state?: string;
   lga?: string;
   address?: string;
+  fcmToken:string;
   createdAt: Date;
   updatedAt: Date;
 }
