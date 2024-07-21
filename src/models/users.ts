@@ -15,6 +15,10 @@ const UserSchema:Schema<IUser> = new Schema<IUser>({
     state: String,
     lga: String,
     address: String,
+    fcmToken:{
+      type:String,
+      default:""
+    },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
   }, { timestamps: true });

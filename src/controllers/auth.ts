@@ -147,7 +147,12 @@ export class Onboarding {
             email:user.email,
             _id:user._id,
             userType:user.userType
+          };
+          if(value.fcmToken){
+            user.fcmToken = value.fcmToken
+            await user.save()
           }
+        
           return successResponse(res,200,"Success",{payload, accessToken} )
       } catch (error:any) {
           writeErrorsToLogs(error)
