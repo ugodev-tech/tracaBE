@@ -88,17 +88,26 @@ export class OrderController {
     static async getAllOrders(req: Request, res: Response, next: NextFunction) {
         try {
             const { status, subOrderId,restaurantId, page = 1, pageSize = 10 } = req.query;
+            const role = (req as any).user.userType
+            const user = (req as any).user
 
             const filter: any = {};
             if (status) filter.status = status;
             
             if (subOrderId) {
                 filter.subOrder = { $in: subOrderId };
+            };
+            // if the login user is a rider, return all orders he is a dispatch rider else if role is a user, return all the users order.
+            if (role === "rider"){
+                filter.dispatchRider = user._id
+
+            }else if(role === "user"){
+                filter.user = user._id
             }
 
             const skip = (Number(page) - 1) * Number(pageSize);
-            const totalSubOrders = await SubOrder.countDocuments(filter);
-            const totalPages = Math.ceil(totalSubOrders / Number(pageSize));
+            const totalOrders = await Order.countDocuments(filter);
+            const totalPages = Math.ceil(totalOrders / Number(pageSize));
 
             const orders = await Order.find(filter)
                 .sort({ createdAt: -1 })
@@ -117,7 +126,7 @@ export class OrderController {
             return successResponse(res, 200, "Success", {
                 orders,
                 pagination: {
-                    totalSubOrders,
+                    totalOrders,
                     totalPages,
                     currentPage: Number(page),
                     pageSize: Number(pageSize)
@@ -134,7 +143,6 @@ export class OrderController {
         const user = (req as any).user;
         const role = user.userType;
         try {
-            const { orderNumber } = req.params;
             const order = await Order.findOne({orderNumber:req.params.orderNumber})
             .populate({
                 path: 'subOrder',
