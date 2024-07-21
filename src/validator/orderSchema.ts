@@ -18,5 +18,9 @@ const cartSchema = Joi.array().items(menuSchema).min(1).required();
 
 export const updateOrderSchema = Joi.object({
     dispatchRider: objectIdValidator.objectId().allow(""),
-    status: Joi.string().valid('pending', 'accepted', 'inDelivery', 'delivered', 'cancelled').allow("")
+    status: Joi.string().valid('pending', 'accepted', 'indelivery', 'delivered', 'cancelled').allow("")
+  });
+
+export const updateDeliverySchema = Joi.object({
+    status: Joi.string().valid('onRoute', 'delivered').required()
   });

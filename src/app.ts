@@ -7,6 +7,7 @@ import { authRouter } from "./routers/userRouters";
 import Database from './db'
 import { shopRouter } from "./routers/shop";
 import { adminRouter } from "./routers/admin";
+import { riderRouter } from "./routers/rider";
 
 const app:Application = express();
 
@@ -29,6 +30,7 @@ if (process.env.PROJ_ENV === 'DEV' || process.env.PROJ_ENV === 'PRODUCTION') {
 app.use("/", authRouter);
 app.use("/", shopRouter)
 app.use("/", adminRouter)
+app.use("/", riderRouter)
 app.use((req:Request, res:Response, next:NextFunction)=>{
     failedResponse(res, 404, `Invalid endpoint, inspect url again.`)
 })
