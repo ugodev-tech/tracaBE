@@ -22,15 +22,15 @@ export class NotificationController {
                 query.read.toLower() === "true";
             }
             const skip = (Number(page) - 1) * Number(pageSize);
-            const totalOrders = await Notification.countDocuments(query);
-            const totalPages = Math.ceil(totalOrders / Number(pageSize));
+            const totalNotifications = await Notification.countDocuments(query);
+            const totalPages = Math.ceil(totalNotifications / Number(pageSize));
 
             const notifications = await Notification.find(query)
                 .sort({ createdAt: -1 })
                 .skip(skip)
                 .limit(Number(pageSize));
         
-            const totalNotifications = await Notification.countDocuments(query);
+            
         
             return successResponse(res, 200, 'Success', {
                 notifications,

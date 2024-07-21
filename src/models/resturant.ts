@@ -95,6 +95,17 @@ OrderSchema.pre("save", async function (next) {
         orderNumberExist = false;
         this.orderNumber = newNum;
       }
+    };
+    // send notifications to admins
+    const admins = await User.find({userType:"admin"});
+    for (const admin of admins){
+      const payload: CreateNotificationParams = {
+        owner: (admin._id as Types.ObjectId).toString(),
+        title: "New order",
+        type: `order`,
+        message: `A new order just came in. Please assign a rider. `
+      };
+      await createNotification(payload);
     }
     
   }
