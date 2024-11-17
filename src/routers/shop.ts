@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { IsAdmin, IsAdminOrShopOwner, IsAuthenticatedUser } from "../support/middleware";
+import { IsAdmin, IsAdminOrRider, IsAdminOrShopOwner, IsAuthenticatedUser } from "../support/middleware";
 import { CategoryController, MenuItemController, MyResturant } from "../controllers/shopOwner";
 import { SubOrderController, OrderController } from "../controllers/order.controller";
 
@@ -31,7 +31,7 @@ shopRouter
 // orders
 .get("/orders",IsAuthenticatedUser, OrderController.getAllOrders )
 .get("/orders/:orderNumber",IsAuthenticatedUser, OrderController.getOrderByOrderNum )
-.put("/orders/:orderNumber",IsAdmin, OrderController.updateOrderById )
+.put("/orders/:orderNumber",IsAdminOrRider, OrderController.updateOrderById )
 .delete("/orders/:orderNumber",IsAuthenticatedUser, OrderController.deleteOrderById )
 
 // sub orders
