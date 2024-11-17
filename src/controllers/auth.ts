@@ -1,4 +1,3 @@
-import { PrismaClient } from '@prisma/client'
 import {Application, Request, Response, NextFunction} from "express"
 import { failedResponse, successResponse } from '../support/http'; 
 import { httpLogger } from '../httpLogger';

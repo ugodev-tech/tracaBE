@@ -9,6 +9,7 @@ adminRouter
 // Dashbaord
 .get("/admin/users", IsAdmin,AdminDashboard.users)
 .get("/admin/users/:id", IsAdmin, AdminDashboard.singleUser)
+.put("/admin/users/:id", IsAdmin, AdminDashboard.verifySingleUser)
 .get("/admin/resturants", IsAuthenticatedUser, AdminDashboard.resturants)
 .get("/admin/resturants/:id", IsAdmin, AdminDashboard.singleResturant)
  

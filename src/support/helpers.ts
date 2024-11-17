@@ -1,4 +1,3 @@
-import { PrismaClient } from '@prisma/client'
 import nodemailer from "nodemailer"
 import dotenv from "dotenv"
 import fs from "fs"
