@@ -2,6 +2,7 @@ import {Schema, Model, model } from 'mongoose';
 import { INotification } from '../interfaces/notification'; 
 import { sendNotif } from '../notification/firebaseNotification';
 import { User } from './users';
+import { writeErrorsToLogs } from '../support/helpers';
 
 const notificationSchema: Schema<INotification> = new Schema<INotification>({
   owner: String,
@@ -16,7 +17,11 @@ notificationSchema.pre("save", async function(next) {
         const user = await User.findById(this.owner)
         if (user?.fcmToken) {
             const notifyPayload = {};
-            await sendNotif(user.fcmToken.toString(), this.title, this.message, notifyPayload);
+            try {
+                await sendNotif(user.fcmToken.toString(), this.title, this.message, notifyPayload);
+            } catch (error) {
+                writeErrorsToLogs(error)
+            }
         }
     };
     next()

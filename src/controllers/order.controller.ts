@@ -6,6 +6,7 @@ import { writeErrorsToLogs } from "../support/helpers";
 import { payloadSchema, updateOrderSchema } from "../validator/orderSchema";
 import { CreateNotificationParams } from "../interfaces/notification";
 import { createNotification } from "../notification/helpers";
+import { User } from "../models/users";
 
 export class OrderController {
     static async checkout(req: Request, res: Response, next: NextFunction) {
@@ -210,6 +211,14 @@ export class OrderController {
                     message: `You have a new order to deliver at ${order?.deliveryLocation}.`
                   };
                   await createNotification(payload);
+                // send notification to the order owner
+                const payload2: CreateNotificationParams = {
+                    owner: order.user.toString(),
+                    title: "New Order",
+                    type: `order`,
+                    message: `Your order with number ${order?.orderNumber} has just been picked.`
+                  };
+                  await createNotification(payload2);
             }
     
             return successResponse(res, 200, "Order updated successfully", order);
