@@ -145,7 +145,8 @@ export class Onboarding {
           const payload ={
             email:user.email,
             _id:user._id,
-            userType:user.userType
+            userType:user.userType,
+            isVerified:user.isVerified
           };
           if(value.fcmToken){
             user.fcmToken = value.fcmToken
@@ -161,9 +162,9 @@ export class Onboarding {
   };
   static async getAccount (req:Request, res:Response){
     try {
-        const user = await User.findById(req.params.id)
+        const user = await User.findById(req.params.id).select("-password -__v").populate("idFront idBack")
         if (!user) {
-          return failedResponse (res, 404, "Email does not exist.")
+          return failedResponse (res, 404, "User does not exist.")
         }
         return successResponse(res,200,"Success",user )
     } catch (error:any) {
