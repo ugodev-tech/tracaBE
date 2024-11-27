@@ -10,6 +10,7 @@ authRouter
 .post("/signup", Onboarding.signup)
 .post("/upload-media", uploadMedia,handlefileUpload, UploadFile)
 .post("/login", Onboarding.login)
+.get("/get-profile/:id",IsAuthenticatedUser, Onboarding.getAccount)
 .put("/update-profile",IsAuthenticatedUser, Onboarding.updateProfile)
 .post("/resend-activation-token", Onboarding.resendToken)
 .post("/verify-email", Onboarding.verifyAccount)
