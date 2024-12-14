@@ -115,7 +115,7 @@ OrderSchema.pre("save", async function (next) {
         owner: (rider._id as Types.ObjectId).toString(),
         title: "New order",
         type: `order`,
-        message: `A new order just came in. `
+        message: `Hey rider, a new order just came in. `
       };
       await createNotification(payload);
     };
