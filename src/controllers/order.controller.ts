@@ -100,11 +100,7 @@ export class OrderController {
             if (subOrderId) {
                 filter.subOrder = { $in: subOrderId };
             };
-            // if the login user is a rider, return all orders he is a dispatch rider else if role is a user, return all the users order.
-            if (role === "rider"){
-                filter.dispatchRider = user._id
-
-            }else if(role === "user"){
+            if(role === "user"){
                 filter.user = user._id
             }
 
