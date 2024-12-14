@@ -39,10 +39,10 @@ export class Onboarding {
       value.password = await bcrypt.hash(value.password, salt);
       const newUser = await User.create(value);
 
-      await OtpToken(value.email, 'Account activation code', 'templates/activateemail.html');
+      // await OtpToken(value.email, 'Account activation code', 'templates/activateemail.html');
       const accessToken = generateJwtToken({ email: value.email, userId: newUser.id, userType: newUser.userType });
 
-      return successResponse(res, 201, 'Verification token has been sent to your email.', accessToken);
+      return successResponse(res, 201, 'Registration successful', accessToken);
     } catch (error: any) {
       writeErrorsToLogs(error);
       return failedResponse(res, 500, error.message);

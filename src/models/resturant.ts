@@ -98,15 +98,27 @@ OrderSchema.pre("save", async function (next) {
     };
     // send notifications to admins
     const admins = await User.find({userType:"admin"});
+    const riders = await User.find({userType:"rider"});
+    // send notifications to admins
     for (const admin of admins){
       const payload: CreateNotificationParams = {
         owner: (admin._id as Types.ObjectId).toString(),
         title: "New order",
         type: `order`,
-        message: `A new order just came in. Please assign a rider. `
+        message: `A new order just came in. `
       };
       await createNotification(payload);
-    }
+    };
+    // send notifications to riders
+    for (const rider of riders){
+      const payload: CreateNotificationParams = {
+        owner: (rider._id as Types.ObjectId).toString(),
+        title: "New order",
+        type: `order`,
+        message: `A new order just came in. `
+      };
+      await createNotification(payload);
+    };
     
   }
 
