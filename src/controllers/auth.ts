@@ -7,6 +7,7 @@ import { OtpToken, ValidateToken, verifyToken, writeErrorsToLogs } from '../supp
 import { generateJwtToken } from '../support/generateTokens';
 import bcrypt from "bcrypt"
 import { Media, User } from '../models/users';
+import { Restaurant } from "../models/resturant";
 
 
 export class Onboarding {
@@ -38,6 +39,11 @@ export class Onboarding {
       const salt = await bcrypt.genSalt(10);
       value.password = await bcrypt.hash(value.password, salt);
       const newUser = await User.create(value);
+
+      if (value.userType === "shopOwner"){
+        await Restaurant.create({owner:newUser._id})
+      }
+
 
       // await OtpToken(value.email, 'Account activation code', 'templates/activateemail.html');
       const accessToken = generateJwtToken({ email: value.email, userId: newUser.id, userType: newUser.userType });
