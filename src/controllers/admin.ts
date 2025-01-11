@@ -11,7 +11,7 @@ export class AdminDashboard {
             const { role, page = 1, pageSize = 10 } = req.query;
 
             const filter: any = {};
-            if (role) filter.role = role;
+            if (role) filter.userType = role;
 
             const skip = (Number(page) - 1) * Number(pageSize);
             const totalUsers = await User.countDocuments(filter);
