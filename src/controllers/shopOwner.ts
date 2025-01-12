@@ -37,9 +37,9 @@ export class MyResturant {
 
     static async retrieveShop (req:Request, res:Response, next:NextFunction){
         try {
-            const {id} = req.params;
+            // const {id} = req.params;
             // check resturant
-            const shop = await Restaurant.findOneAndUpdate({_id:id, owner:(req as any).user._id});
+            const shop = await Restaurant.findOne({owner:(req as any).user._id});
             if (!shop) {
                 return failedResponse(res, 404, 'Restaurant not found.');
             }

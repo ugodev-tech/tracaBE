@@ -7,7 +7,7 @@ export const shopRouter = Router()
 
 shopRouter
 .put("/my-shop/:id", IsAuthenticatedUser, MyResturant.setupShop)
-.get("/my-shop/:id", IsAuthenticatedUser, MyResturant.retrieveShop)
+.get("/my-shop", IsAuthenticatedUser, MyResturant.retrieveShop)
 
 // category
 .post('/categories', IsAuthenticatedUser,CategoryController.createCategory)
