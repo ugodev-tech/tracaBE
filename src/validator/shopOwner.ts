@@ -23,13 +23,13 @@ export const CategorySchema = Joi.object({
   restaurant: Joi.string().required(),
   name: Joi.string().required(),
   description: Joi.string().allow(""),
-  image: Joi.string().allow(""),
+  image: Joi.string().optional(),
 });
 
 export const updateCategorySchema = Joi.object({
   name: Joi.string().allow(""),
   description: Joi.string().allow(""),
-  image: Joi.string().allow(""),
+  image: Joi.string().optional(),
 });
 
 export const MenuItemSchema = Joi.object({
