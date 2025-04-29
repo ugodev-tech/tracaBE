@@ -8,6 +8,7 @@ const UserSchema:Schema<IUser> = new Schema<IUser>({
     password: { type: String, required: true },
     userType: { type: String, default:"user" },
     isVerified: { type: Boolean, default: true },
+    phone: { type: String, default: "" },
     personalAddress: String,
     businessAddress: String,
     idBack: { type: Schema.Types.ObjectId, ref: 'Media' },
