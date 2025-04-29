@@ -8,11 +8,11 @@ import { User } from "./users";
 
 const RestaurantSchema:Schema<IRestaurant> = new Schema<IRestaurant>({
     owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    name: { type: String },
+    name: { type: String , default:"Trace Shop"},
     image: { type: Schema.Types.ObjectId, ref: 'Media' },
-    address: { type: String },
-    phone: { type: String },
-    email: { type: String },
+    address: { type: String, default:"" },
+    phone: { type: String, default:"" },
+    email: { type: String, default:"" },
     openingHours: [{
       day: { type: String },
       open: { type: String },

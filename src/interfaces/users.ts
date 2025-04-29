@@ -12,6 +12,7 @@ export interface IUser extends Document {
   idFront?: Imedia["_id"]
   state?: string;
   lga?: string;
+  phone?: string;
   address?: string;
   fcmToken:string;
   createdAt: Date;
