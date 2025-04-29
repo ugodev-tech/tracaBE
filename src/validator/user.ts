@@ -29,7 +29,8 @@ export const userValidator = Joi.object({
   idFront: Joi.string().allow(""),
   state: Joi.string().allow(""),
   lga: Joi.string().allow(""),
-  address: Joi.string().allow("")
+  address: Joi.string().allow(""),
+  phone: Joi.string().optional(),
 });
 
 export const updateUserValidator = Joi.object({
@@ -40,7 +41,8 @@ export const updateUserValidator = Joi.object({
   idFront: Joi.string().allow(""),
   state: Joi.string().allow(""),
   lga: Joi.string().allow(""),
-  address: Joi.string().allow("")
+  address: Joi.string().allow(""),
+  phone: Joi.string().optional(),
 });
 
 export const emailValidator = Joi.object({
